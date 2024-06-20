@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="noticeMapper">
+
+	<select id="selectListAll" resultMap="noticeResultSet">
+		SELECT * FROM notice
+		ORDER BY NOTICE_IDX DESC
+	</select>
+
+	<resultMap type="notice" id="noticeResultSet">
+		<result column="NOTICE_IDX" property="idx"></result>
+		<result column="NOTICE_TITLE" property="title"></result>
+		<result column="NOTICE_CONTENT" property="content"></result>
+		<result column="NOTICE_WRITER" property="writer"></result>
+		<result column="NOTICE_INDATE" property="indate"></result>
+		<result column="NOTICE_VIEWS" property="views"></result>
+	</resultMap>
+	
+	<select id="selectListCount" resultType="_int">
+		SELECT COUNT(*) FROM notice
+	</select>
+
+</mapper>

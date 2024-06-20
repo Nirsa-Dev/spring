@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="infoMapper">
+	<insert id="enrollBoard" parameterType="info">
+		INSERT INTO info VALUES(seq_info_idx.NEXTVAL,
+								#{title},
+								#{content},
+								#{category},
+								#{writer},
+								SYSDATE,
+								0,
+								#{uploadPath},
+								#{uploadName},
+								#{uploadOriginName})
+	</insert>
+	
+	<select id="detailBoard" resultMap="infoResultSet">
+		SELECT * FROM info
+		WHERE info_idx = #{idx}
+	</select>
+	
+	<update id="editBoard" parameterType="info">
+		UPDATE info SET info_title = #{title},
+						info_content = #{content},
+						upload_path = #{uploadPath},
+						upload_name = #{uploadName},
+						upload_origin_name = #{uploadOriginName}
+					WHERE info_idx = #{idx}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="info">
+		DELETE FROM info
+		WHERE info_idx = #{idx}
+	</delete>
+	
+	<select id="selectListAll" resultMap="infoResultSet">
+		SELECT * FROM info
+		<choose>
+			<when test='searchCategory.equals("title")'>
+				WHERE info_title LIKE '%' || #{searchText} || '%'
+			</when>
+			<when test='searchCategory.equals("content")'>
+				WHERE info_content LIKE '%' || #{searchText} || '%'
+			</when>
+			<when test='searchCategory.equals("writer")'>
+				WHERE info_writer LIKE '%' || #{searchText} || '%'
+			</when>
+		</choose>
+		ORDER BY INFO_IDX DESC
+	</select>
+	
+	<update id="views" parameterType="info">
+		UPDATE info SET info_views = #{views}
+					WHERE info_idx = #{idx}
+	</update>
+
+	<resultMap type="info" id="infoResultSet">
+		<result column="INFO_IDX" property="idx"></result>
+		<result column="INFO_TITLE" property="title"></result>
+		<result column="INFO_CONTENT" property="content"></result>
+		<result column="INFO_CATEGORY" property="category"></result>
+		<result column="INFO_WRITER" property="writer"></result>
+		<result column="INFO_INDATE" property="indate"></result>
+		<result column="INFO_VIEWS" property="views"></result>
+	</resultMap>
+	
+	<update id="editBoardEmptyUpload" parameterType="info">
+		UPDATE info SET info_title = #{title},
+						info_content = #{content}
+					WHERE info_idx = #{idx}
+	</update>
+	
+	<select id="selectListCount" resultType="_int">
+		SELECT COUNT(*) FROM info
+		<choose>
+			<when test='searchCategory.equals("content")'>
+				WHERE info_content LIKE '%' || #{searchText} || '%'
+			</when>
+			<when test='searchCategory.equals("title")'>
+				WHERE info_title LIKE '%' || #{searchText} || '%'
+			</when>
+			<when test='searchCategory.equals("writer")'>
+				WHERE info_writer LIKE '%' || #{searchText} || '%'
+			</when>
+		</choose>
+	</select>
+	
+		<select id="selectWriter" resultType="string">
+		SELECT info_writer FROM info
+		WHERE info_idx = #{idx}
+	</select>
+	
+	<select id="selectFileName" resultType="string">
+		SELECT upload_name FROM info
+		WHERE info_idx = #{idx}
+	</select>
+
+</mapper>

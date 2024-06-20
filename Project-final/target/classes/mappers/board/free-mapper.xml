@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="freeMapper">
+	<insert id="enrollBoard" parameterType="board">
+		INSERT INTO free VALUES(seq_free_idx.NEXTVAL,
+								#{title},
+								#{content},
+								#{writer},
+								SYSDATE,
+								0,
+								#{uploadPath},
+								#{uploadName},
+								#{uploadOriginName})
+	</insert>
+
+
+
+	<select id="selectListAll" resultMap="freeResultSet">
+		SELECT * FROM free
+		<choose>
+			<when test='searchCategory.equals("title")'>
+				WHERE free_title LIKE '%' || #{searchText} || '%'
+			</when>
+			<when test='searchCategory.equals("content")'>
+				WHERE free_content LIKE '%' || #{searchText} || '%'
+			</when>
+			<when test='searchCategory.equals("writer")'>
+				WHERE free_writer LIKE '%' || #{searchText} || '%'
+			</when>
+		</choose>
+		ORDER BY FREE_IDX DESC
+	</select>
+
+
+
+
+
+	<resultMap type="free" id="freeResultSet">
+		<result column="FREE_IDX" property="idx"></result>
+		<result column="FREE_TITLE" property="title"></result>
+		<result column="FREE_CONTENT" property="content"></result>
+		<result column="FREE_WRITER" property="writer"></result>
+		<result column="FREE_INDATE" property="indate"></result>
+		<result column="FREE_VIEWS" property="views"></result>
+	</resultMap>
+	
+	<update id="views" parameterType="free">
+		UPDATE free SET free_views = #{views}
+					WHERE free_idx = #{idx}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="free">
+		DELETE FROM free
+		WHERE free_idx = #{idx}
+	</delete>
+	
+	<select id="detailBoard" resultMap="freeResultSet">
+		SELECT *
+	    FROM free
+		WHERE free_idx = #{idx}
+	</select>
+	
+	<update id="editBoard" parameterType="free">
+		UPDATE free SET free_title = #{title},
+						free_content = #{content},
+						upload_path = #{uploadPath},
+						upload_name = #{uploadName},
+						upload_origin_name = #{uploadOriginName}
+					WHERE free_idx = #{idx}
+	</update>
+	
+	<update id="editBoardEmptyUpload" parameterType="free">
+		UPDATE free SET free_title = #{title},
+						free_content = #{content}
+					WHERE free_idx = #{idx}
+	</update>
+	
+	
+	
+	
+	<select id="selectListCount" resultType="_int">
+		SELECT COUNT(*) FROM free
+		<choose>
+			<when test='searchCategory.equals("content")'>
+				WHERE free_content LIKE '%' || #{searchText} || '%'
+			</when>
+			<when test='searchCategory.equals("title")'>
+				WHERE free_title LIKE '%' || #{searchText} || '%'
+			</when>
+			<when test='searchCategory.equals("writer")'>
+				WHERE free_writer LIKE '%' || #{searchText} || '%'
+			</when>
+		</choose>
+	</select>
+	
+	
+	
+	
+	
+	<select id="selectWriter" resultType="string">
+		SELECT free_writer FROM free
+		WHERE free_idx = #{idx}
+	</select>
+	
+	<select id="selectFileName" resultType="string">
+		SELECT upload_name FROM free
+		WHERE free_idx = #{idx}
+	</select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
