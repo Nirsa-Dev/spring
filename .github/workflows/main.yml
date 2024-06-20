@@ -10,8 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name : Get Github Action IP
+        id : ip
+        uses: haythem/public-ip@v1.2
+      
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
+        env:
+         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         AWS_DEFAULT_REGION: ap-northeast-2
       
       - name: SSH to EC2 and update repository
         uses: appleboy/ssh-action@master
@@ -25,8 +37,15 @@ jobs:
             pwd
             echo "file List : "
             ls -lh
-            cd Github/Data_Project_2
-            git pull
+            sudo ./deploy.sh
+
+      - name: Remove Github Actions IP from security group
+        run: |
+         aws ec2 revoke-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        env:
+         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         AWS_DEFAULT_REGION: ap-northeast-2
 
 # Note: For private repository, uncomment the following line and add your credentials to secrets.
 # git pull https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASSWORD }}@github.com/blockenters/streamlit_kmeans.git
