@@ -21,6 +21,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           debug: true
           script: |
+            echo "pwd : "
+            pwd
+            echo "file List : "
+            ls -lh
             cd Github/Data_Project_2
             git pull
 
