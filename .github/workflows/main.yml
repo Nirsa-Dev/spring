@@ -37,11 +37,12 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package
+        working-directory: ./Project-final
 
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
-          source: "target/*.jar"
+          source: "Project-final/target/*.jar"
           target: "${{ secrets.USER }}@${{ secrets.HOST }}:/home/${{ secrets.USER }}/app.jar"
           key: ${{ secrets.SSH_KEY }}
       
