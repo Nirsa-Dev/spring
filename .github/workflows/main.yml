@@ -35,6 +35,12 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
+      - name: Install Oracle JDBC driver
+        run: |
+          curl -L -o ojdbc6.jar https://path/to/download/ojdbc6.jar
+          mvn install:install-file -Dfile=ojdbc6.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=12.1.0.2 -Dpackaging=jar
+
+
       - name: Build with Maven
         run: mvn clean package
         working-directory: ./Project-final
