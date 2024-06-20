@@ -23,7 +23,7 @@ jobs:
 
       - name: Add GitHub Actions IP to Security Group
         run: |
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ env.runner_ip }}/32    
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ env.runner_ip }}/32  # 수정된 부분
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -45,11 +45,8 @@ jobs:
 
       - name: Remove GitHub Actions IP from Security Group
         run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ env.runner_ip }}/32
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ env.runner_ip }}/32  # 수정된 부분
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
-
-# Note: For private repository, uncomment the following line and add your credentials to secrets.
-# git pull https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASSWORD }}@github.com/blockenters/streamlit_kmeans.git
