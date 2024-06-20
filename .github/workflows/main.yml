@@ -41,7 +41,7 @@ jobs:
             pwd
             echo "file List : "
             ls -lh
-            sudo ./deploy.sh
+            sudo sh deploy.sh
 
       - name: Remove GitHub Actions IP from Security Group
         run: |
