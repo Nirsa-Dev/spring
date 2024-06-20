@@ -11,23 +11,13 @@ import kr.co.green.board.model.dto.BoardDTO;
 import kr.co.green.common.paging.PageInfo;
 
 @Service
-public class NoticeServiceImpl implements BoardService{
+public class NoticeServiceImpl{
 	
 	@Autowired
 	private SqlSessionTemplate sqlSession;
 	
 	@Autowired
 	private NoticeDAO noticeDao;
-	
-	@Override
-	public int selectListCount() {
-		return noticeDao.selectListCount(sqlSession);
-	}
-	
-	@Override
-	public List<BoardDTO> selectListAll(PageInfo pi) {
-		return noticeDao.selectListAll(sqlSession, pi);
-	}
 
 	
 
