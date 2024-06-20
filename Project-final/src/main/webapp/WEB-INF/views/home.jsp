@@ -3,7 +3,7 @@
 <%@ page session="false" %>
 <html>
 <head>
-	<title>,ㅁㄴㅇ러ㅜㄴㅇ마러ㅜHome!!!!!!!!!!!!!!</title>
+	<title>Home!!!!!!!!</title>
 </head>
 <body>
 <h1>
