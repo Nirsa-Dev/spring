@@ -10,9 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name : Get Github Action IP
-        id : ip
-        uses: haythem/public-ip@v1.2
+      - name: Get Public IP
+        id: get_ip
+        run: |
+          echo "Fetching public IP"
+          public_ip=$(curl -s http://checkip.amazonaws.com)
+          echo "Public IP: $public_ip"
+          echo "::set-output name=public_ip::$public_ip"
       
       - name: Checkout code
         uses: actions/checkout@v4
