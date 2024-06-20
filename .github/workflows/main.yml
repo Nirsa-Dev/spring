@@ -19,6 +19,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
+          debug: true
           script: |
             cd Github/Data_Project_2
             git pull
