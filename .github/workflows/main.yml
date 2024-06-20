@@ -16,7 +16,7 @@ jobs:
           echo "Fetching public IP"
           public_ip=$(curl -s http://checkip.amazonaws.com)
           echo "Public IP: $public_ip"
-          echo "::set-output name=public_ip::$public_ip"
+          echo "public_ip=$public_ip" >> $GITHUB_ENV
       
       - name: Checkout code
         uses: actions/checkout@v4
