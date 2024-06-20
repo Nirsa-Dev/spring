@@ -39,6 +39,10 @@ jobs:
         run: mvn clean package
         working-directory: ./Project-final
 
+      - name: Verify build output
+        run: ls -lh ./Project-final/target
+
+
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
