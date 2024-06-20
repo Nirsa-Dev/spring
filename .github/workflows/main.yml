@@ -45,6 +45,8 @@ jobs:
           source: "Project-final/target/*.jar"
           target: "${{ secrets.USER }}@${{ secrets.HOST }}:/home/${{ secrets.USER }}/app.jar"
           key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.HOST }}
+
       
       - name: SSH to EC2 and deploy JAR
         uses: appleboy/ssh-action@v0.1.7
