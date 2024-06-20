@@ -29,7 +29,23 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-2
 
-      - name: SSH to EC2 and update repository
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Build with Maven
+        run: mvn clean package
+
+      - name: Copy JAR to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          source: "target/*.jar"
+          target: "${{ secrets.USER }}@${{ secrets.HOST }}:/home/${{ secrets.USER }}/app.jar"
+          key: ${{ secrets.SSH_KEY }}
+      
+      - name: SSH to EC2 and deploy JAR
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
@@ -37,11 +53,12 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           debug: true
           script: |
-            echo "pwd : "
-            pwd
-            echo "file List : "
-            ls -lh
-            sudo sh deploy.sh
+            echo "Stopping application"
+            sudo sh /usr/local/tomcat9/bin/shutdown.sh
+            echo "Deploying new JAR"
+            mv /home/${{ secrets.USER }}/app.jar /usr/local/tomcat9/webapps/app.jar
+            echo "Starting application"
+            sudo sh /usr/local/tomcat9/bin/startup.sh
 
       - name: Remove GitHub Actions IP from Security Group
         run: |
