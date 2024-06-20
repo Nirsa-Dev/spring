@@ -19,8 +19,6 @@ public class NoticeServiceImpl{
 	@Autowired
 	private NoticeDAO noticeDao;
 
-	
-
 }
 
 
