@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Get GitHub Actions Runner Public IP
-        id: get_ip
+        id: get_ip_1
         run: |
           echo "Fetching GitHub Actions Runner public IP"
           runner_ip=$(curl -s https://api.ipify.org)
@@ -60,7 +60,7 @@ jobs:
           AWS_DEFAULT_REGION: us-east-2
 
       - name: Get GitHub Actions Runner Public IP
-        id: get_ip
+        id: get_ip_2
         run: |
           echo "Fetching GitHub Actions Runner public IP"
           runner_ip=$(curl -s https://api.ipify.org)
