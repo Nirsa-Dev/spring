@@ -1,17 +1,14 @@
 name: Deploy
-
 on:
   push:
     branches:
       - master
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Get GitHub Actions Runner Public IP
-        id: get_ip_1
+        id: get_ip
         run: |
           echo "Fetching GitHub Actions Runner public IP"
           runner_ip=$(curl -s https://api.ipify.org)
@@ -20,7 +17,6 @@ jobs:
       
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Add GitHub Actions IP to Security Group
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ env.runner_ip }}/32  # 수정된 부분
@@ -28,17 +24,14 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-2
-
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '11'
-
       - name: Build with Maven
         run: mvn clean package
         working-directory: ./Project-final
-
       - name: Verify build output
         run: ls -lh ./Project-final/target
 
@@ -48,35 +41,8 @@ jobs:
         with:
           source: "Project-final/target/*.war"
           target: "${{ secrets.USER }}@${{ secrets.HOST }}:/home/${{ secrets.USER }}/app.war"
-          key: ${{ secrets.SSH_KEY }}
-          host: ${{ secrets.HOST }}
 
-      - name: Remove GitHub Actions IP from Security Group
-        run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ env.runner_ip }}/32  # 수정된 부분
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-2
 
-      - name: Get GitHub Actions Runner Public IP
-        id: get_ip_2
-        run: |
-          echo "Fetching GitHub Actions Runner public IP"
-          runner_ip=$(curl -s https://api.ipify.org)
-          echo "Runner Public IP: $runner_ip"
-          echo "runner_ip=$runner_ip" >> $GITHUB_ENV
-      
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Add GitHub Actions IP to Security Group
-        run: |
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ env.runner_ip }}/32  # 수정된 부분
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-2
       - name: SSH to EC2 and deploy WAR
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -91,7 +57,6 @@ jobs:
             mv /home/${{ secrets.USER }}/app.war /usr/local/tomcat9/webapps/app.war
             echo "Starting application"
             sudo sh /usr/local/tomcat9/bin/startup.sh
-
       - name: Remove GitHub Actions IP from Security Group
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ env.runner_ip }}/32  # 수정된 부분
